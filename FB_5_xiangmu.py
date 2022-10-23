@@ -10,6 +10,7 @@
 from curses import keyname
 import random
 from time import time, time_ns
+from tkinter import Menu
 
 player_victor = 0
 enemy_victor = 0
@@ -221,4 +222,181 @@ class Book:
 # book1 = Book('像自由一样美丽', '林达', '你要用光明来定义黑暗，用黑暗来定义光明') # 传入参数，创建实例
 # print(book1) # 此处的类实例化是为了测试代码是否有bug
 
-class BookManager(Book):
+# 创建一个FictionBook的子类，给书本加入类型数据
+class FictionBook(Book): # 子类继承父类，需要指定父类名啊，这点怎么能忘记
+    def __init__(self,bookname,author,recommended,status=0,type = '虚构类'):
+        Book. __init__(self,bookname,author,recommended,status=0) # 继承Book的构造属性
+        self.type = type # 添加子类独有的属性
+
+    def __str__(self):
+        state = '未借出'
+        if self.status == 1:
+            state = '已借出'
+        return '类型：{} 名称：{} 作者：{} 推荐语：{} 状态：{}'.format(self.type,self.bookname,self.author,self.recommended,state)
+
+FictionBook1 = FictionBook('囚鸟','冯内古特','我们都是受困于时代的囚鸟')
+print(FictionBook1)
+
+# 我的设计，没有注意方法之间的调用关系
+# class BookManager():
+#     def memu(self):
+#         self.menu = int(input('请输入对应数字选择功能：1.查询所有书籍；2.添加书籍；3.借阅书籍；4.归还书籍；5.退出系统')) # 数字控制流程
+# book1 = BookManager()
+# print(book1)
+
+# 老师的设计，注重程序内部调用的逻辑
+class BookManager:
+    book = [] # 创建一个列表，列表里每个元素都是Book类的一个实例
+    def __init__(self): # 构造函数，对象实例化，无需调用自动运行
+        book1 = Book('惶然录','费尔南多·佩索阿','一个迷失方向且濒于崩溃的灵魂的自我启示，一首对默默无闻、失败、智慧、困难和沉默的赞美诗。')
+        book2 = Book('以箭为翅','简媜','调和空灵文风与禅宗境界，刻画人间之缘起缘灭。像一条柔韧的绳子，情这个字，不知勒痛多少人的心肉。')
+        book3 = Book('心是孤独的猎手','卡森·麦卡勒斯','我们渴望倾诉，却从未倾听。女孩、黑人、哑巴、醉鬼、鳏夫的孤独形态各异，却从未退场。', 1)
+
+        # self.book.append.book1 # 往列表依次添加元素，注意调用类属性book时，self不能丢
+        self.book.append(book1)
+        # self.book.append.book2 # 提示错误：AttributeError: 'builtin_function_or_method' object has no attribute 'book1'
+        self.book.append(book2)
+        # self.book.append.book3 # 因为对象属性没有被传输进去，append()方法调用错误，追加列表元素是方法不是属性
+        self.book.append(book3)
+
+        # self.book = [book1,book2,book3]
+        # 以上3行代码可以简化为一行，不需要在前面创建空列表接收数据
+
+    def menu(self):
+        choice = int(input('请输入对应数字选择功能：1.查询所有书籍；2.添加书籍；3.借阅书籍；4.归还书籍；5.退出系统'))
+        while True:
+            if choice == 1:
+                self.show_all() # 调用对象方法时self不能忘
+            elif choice == 2:
+                self.add_book()
+            elif choice == 3:
+                self.lend_book()
+            elif choice == 4:
+                self.return_book()
+            else:
+                # quick_sys() # 当你设计方法时，先想想这个方法的内部逻辑是否可完成
+                break # 老师这里直接用break结束循环，表示退出系统，言简意赅
+
+    def show_all(self):
+        for i in self.book: # 遍历实例里的每个元素
+            print(i) # 列表book里的每个元素都是基于Book类创建的实例对象，所以每个元素会自动拥有Book类的方法__str__：直接打印返回值
+
+    def add_book(self):
+        new_bookname = input('请输入书籍名字：') # 定义的新的变量名，在之后需要调用才会有效
+        new_author = input('请输入作者名称：')
+        new_recommended = input('请输入推荐语：')
+        new_status = int(input('请输入借出状态。0表示未借出，1表示已借出：'))
+        new_book = Book(new_bookname,new_author,new_recommended,new_status) # 调用Book类，传入新书的参数
+        self.book.append(new_book) # 将新书追加到列表末尾
+        print('新书录入成功')
+        # self.new_bookname = new_bookname # 这里是错误的做法，只是将新书的属性又赋值了一遍，没有追加到列表里面
+        # self.new_author = new_author
+        # self.new_recommended = new_recommended
+        # self.new_status = new_status
+
+    def lend_book(self):
+        borrow_bookname = input('请输入你想借走的书籍名称：')
+        res = self.check_bookname(borrow_bookname) # 将检查书名的其中一个属性赋值给 res
+        # 借书的时候要检查有没有这个书名
+        for book in self.book:
+            if res != None: # 漏掉了 .bookname ，属性值与属性值才能比较；列表不能与str比较
+                if res.status == 1: # res 自动获得了后面的书本其他的属性；这就是构造函数的意义：属性自动获得，方法随时调用
+                    print('本书已经被人借走了哦')
+                    break
+                else:
+                    res.status = 1
+                    print('本书已经成功被你借到了哦')
+                    break
+            else:
+                continue
+        else:
+            print('图书馆里没有这本书哦')
+
+    def return_book(self):
+        return_bookname = input('请输入您还书的名称：')
+        # 还书的时候也要检查有没有这个书名
+        res = self.check_bookname(return_bookname)
+        if res == None:
+            print('我们没有这本书哦')
+        else:
+            if res.status == 0:
+                print('已经被借出了哦，你是不是还错书了')
+            else:
+                print('谢谢，已经收到您还的书了')
+                res.status = 0
+
+    # def check_bookname(self,checkname): 
+        # 封装一个函数检查有没有这个书名，不用重复写代码
+    def check_bookname(self,bookname):
+        # 为什么要用bookname，因为需要与前面定义的变量名保持一致，也就是不用传入全部参数，也可以获得后面的推荐语、借出状态等其他属性
+        for book in self.book: # 遍历每个Book实例
+            if book.bookname == bookname: # 遇到实例名与输入书籍名一致
+                return book # 返回该实例对象，遇到return语句方法停止执行
+        else:
+            return None # 若没有这本书，返回 None 值
+
+    # 我的设计，考虑获取列表中的值来比较，但是值有很多种不同的，需要传入其他的列表来比较
+    # def check_author(self,bookauthor):
+    #     for author in self.author:
+    #         if  book.author == bookauthor:
+    #             retrun book
+    #     else:
+    #         return None
+
+BookManager1 = BookManager() # 对象实例化
+BookManager1.menu()
+
+    # 老师的设计
+class Book:
+    def __init__(self,bookname,author,recommended,status=0): # 利用初始化方法__init__，让实例被创建时自动获得这些属性
+        self.bookname = bookname
+        self.author = author
+        self.recommended = recommended
+        self.status = status # 给status设置默认值，0表示未借出，1表示已借出
+    # def show_info(self):
+    def __str__(self): # Python中方法名形式左右带双下划线的为特殊方法
+    # __str__打印对象即可打印出该方法中的返回值，而无须再调用方法
+        if self.status == 0: # 相当于函数中的global变量，self可以提供占位，并在当前类中调用其他属性和方法
+            state = '未借出'  # 此处应该单独设置一个变量接收“状态”，分清楚变量的作用范围，也就是要理解计算机的理解逻辑
+        else:
+            state = '已借出'
+        return '名称：{} 作者：{} 推荐语：{} 状态：{}'.format(self.bookname,self.author,self.recommended,state) # 此处为类中修改属性，传入的参数名应该与修改的参数名一致
+# book1 = Book('像自由一样美丽', '林达', '你要用光明来定义黑暗，用黑暗来定义光明') # 传入参数，创建实例
+# print(book1) # 此处的类实例化是为了测试代码是否有bug
+class AuthorManager:
+
+    authors = []
+    # 创建一个存放作者名的列表
+    def __init__(self):
+        book1 = Book('撒哈拉的故事','三毛','我每想你一次，天上便落下一粒沙，从此便有了撒哈拉。')
+        book2 = Book('梦里花落知多少','三毛','人人都曾拥有荷西，虽然他终会离去。')
+        book3 = Book('月亮与六便士','毛姆','满地都是六便士，他却抬头看见了月亮。')
+        self.books = [book1,book2,book3]
+        # 将三个实例放在列表books里
+        self.authors.append(book1.author)
+        self.authors.append(book2.author)
+        self.authors.append(book3.author)
+        # 将三个实例的作者名添加到列表author里
+ 
+    def authormenu(self):
+        while True:
+            print('1.查询书籍')
+            choice = int(input('请输入数字选择对应的功能：'))
+            if choice == 1:
+                self.show_author_book()
+                # 调用方法
+            else:
+                print('感谢使用！')
+                break
+ 
+    def show_author_book(self):
+        author = input('你想找谁的书呢？')
+        if author in self.authors:
+            for book in self.books:
+                if book.author == author:
+                    print(book)
+        else:
+            print('很可惜，我们暂时没有收录这位作者的作品')
+
+AuthorManager1 = AuthorManager() # 对象实例化
+AuthorManager1.authormenu()

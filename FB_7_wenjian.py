@@ -47,7 +47,7 @@ with open(r'D:\OneDrive\GitHub\SquidGame\outputfile.txt','a+',encoding='utf-8') 
     file1.write('小兔子\n')
     filecontent = file1.read()
 print(filecontent)
-# 使用with关键字的写法
+# 使用with关键字的写法，意思是：用变量名打开文件
 with open('abc.txt','a') as file1:
 #with open('文件地址','读写模式') as 变量名:
     #格式：冒号不能丢

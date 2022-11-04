@@ -8,6 +8,7 @@
 
 # 敌我两PK，三局两胜制，用“计分板”判断最终胜利
 from curses import keyname
+from http import server
 import random
 from time import time, time_ns
 from tkinter import Menu
@@ -400,3 +401,14 @@ class AuthorManager:
 
 AuthorManager1 = AuthorManager() # 对象实例化
 AuthorManager1.authormenu()
+
+# 发邮件
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+server = smtplib.SMTP_SSL()
+server.connect('smtp.exmail.qq.com',465,'utf-8')
+server.login('zhanzhongjia@dcmedia.com.cn',"Aa123789")
+server.sendmail('zhanzhongjia@dcmedia.com.cn','zzj@ydshuzi.com',msg.as_string())
+server.quit()

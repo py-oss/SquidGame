@@ -127,9 +127,9 @@ winner_new.writelines(final_scores)
 winner_new.close()
 
 # 复制图片
-with open('1.jpg','rb') as file1: # 奇怪的是用rb+模式写出来的图片打不开
+with open('1.png','rb') as file1: # 奇怪的是用rb+模式写出来的图片打不开
     filecontent = file1.read()
-with open('2.jpg','wb') as file2: # 奇怪的是用wb+模式写出来的图片打不开
+with open('2.png','wb') as file2: # 奇怪的是用wb+模式写出来的图片打不开
     file2.write(filecontent)
 
 # 古诗词填空

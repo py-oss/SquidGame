@@ -403,12 +403,178 @@ AuthorManager1 = AuthorManager() # 对象实例化
 AuthorManager1.authormenu()
 
 # 发邮件
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-from email.mime.multipart import MIMEMultipart
-server = smtplib.SMTP_SSL()
-server.connect('smtp.exmail.qq.com',465,'utf-8')
-server.login('zhanzhongjia@dcmedia.com.cn',"Aa123789")
-server.sendmail('zhanzhongjia@dcmedia.com.cn','zzj@ydshuzi.com',msg.as_string())
-server.quit()
+import smtplib # smtplib 用于邮件的发信动作
+from email.mime.text import MIMEText # email 用于构建邮件内容
+from email.header import Header
+from_addr = input('请输入发件邮箱：') # 发信方的信息：发信邮箱，授权码
+password = input('请输入发件邮箱密码：')
+to_addr = input('请输入收件邮箱：') # 收信方邮箱
+smtp_server = 'smtp.exmail.qq.com' # 发信服务器
+mailtext ='''
+123
+456
+789
+'''
+msg = MIMEText(mailtext,'plain','utf-8') # 邮箱正文内容，第一个参数为内容，第二个参数为格式(plain 为纯文本)，第三个参数为编码
+msg['From'] = Header(from_addr) # 邮件头信息
+msg['To'] = Header(to_addr) # 必须放在邮件内容之后，因为msg需先定义才能使用
+msg['Subject'] = Header('python test')
+server = smtplib.SMTP_SSL(smtp_server) # 报错：smtplib.SMTPServerDisconnected: please run connect() first 3.7之后改版，需在在括号内加入host参数
+server.connect(smtp_server,465)
+server.login(from_addr, password) # 登录发信邮箱
+server.sendmail(from_addr, to_addr, msg.as_string()) # 发送邮件
+server.quit() # 关闭服务器
+
+# 群发邮件
+import smtplib # smtplib 用于邮件的发信动作
+from email.mime.text import MIMEText # email 用于构建邮件内容
+from email.header import Header # 用于构建邮件头
+import csv # 引用csv模块，用于读取邮箱信息
+from_addr = input('请输入登录邮箱：')
+password = input('请输入邮箱授权码：')
+smtp_server = 'smtp.exmail.qq.com' # 发信服务器
+text='''亲爱的学员，你好
+我是吴枫老师，能遇见你很开心。
+希望学习python对你不是一件困难的事情！
+人生苦短，我用Python
+'''
+data = [['wufeng ', 'wufeng@qq.com'],['kaxi', 'kaxi@qq.com']] # 待写入csv文件的收件人数据：人名+邮箱
+with open('to_addrs.csv', 'w', newline='') as f: # 写入收件人数据
+    writer = csv.writer(f)
+    for row in data:
+        writer.writerow(row)
+with open('to_addrs.csv', 'r') as f: # 读取收件人数据，并启动写信和发信流程
+    reader = csv.reader(f)
+    for row in reader: 
+        to_addrs=row[1]
+        msg = MIMEText(text,'plain','utf-8')
+        msg['From'] = Header(from_addr)
+        msg['To'] = Header(to_addrs)
+        msg['Subject'] = Header('python test')
+        server = smtplib.SMTP_SSL(smtp_server)
+        server.connect(smtp_server,465)
+        server.login(from_addr, password)
+        try:
+            server.sendmail(from_addr, to_addrs, msg.as_string())
+            print('恭喜，发送成功')
+        except:
+            print('发送失败，请重试')
+server.quit() # 关闭服务器
+
+# 制作二维码
+from MyQR import myqr
+myqr.run(
+    words='http://weixin.qq.com/r/kzlje9TEE4lsrZAY92yB',
+    # 扫描二维码后，显示的内容，或是跳转的链接
+    version=5,  # 设置容错率
+    level='H',  # 控制纠错水平，范围是L、M、Q、H，从左到右依次升高
+    picture='SquidGame\\1.png',  # 图片所在目录，可以是动图
+    colorized=True,  # 黑白(False)还是彩色(True)
+    contrast=1.0,  # 用以调节图片的对比度，1.0 表示原始图片。默认为1.0。
+    brightness=1.0,  # 用来调节图片的亮度，用法同上。
+    save_name='SquidGame\\3.png',  # 控制输出文件名，格式可以是 .jpg， .png ，.bmp ，.gif
+    )
+
+# 求绝对值的三种方法
+import math
+def abs_value1(): # 方法1：条件判断
+    a = float(input('1.请输入一个数字：'))
+    if a >= 0:
+        a = a
+    else:
+        a = -a
+    print('绝对值为：%f' % a)
+def abs_value2(): # 方法2：内置函数 abs()
+    a = float(input('2.请输入一个数字：'))
+    a = abs(a)
+    print('绝对值为：%f' % a)
+def abs_value3(): # 方法3：内置模块 math
+    a = float(input('3.请输入一个数字：'))
+    a = math.fabs(a)
+    print('绝对值为：%f' % a)
+abs_value1()
+abs_value2()
+abs_value3()
+
+# 录入楼栋信息
+import csv
+#调用csv模块
+with open('assets.csv', 'a', newline='') as csvfile:
+#调用open()函数打开csv文件，传入参数：文件名“assets.csv”、追加模式“a”、newline=''。
+    writer = csv.writer(csvfile, dialect='excel')
+    # 用csv.writer()函数创建一个writer对象。
+    header=['小区名称', '地址', '建筑年份', '楼栋', '单元', '户室', '朝向', '面积']
+    writer.writerow(header)
+
+title=input('请输入小区名称：')
+address = input('请输入小区地址：')
+year = input('请输入小区建造年份：')
+block = input('请输入楼栋号：')
+
+
+unit_loop = True
+while unit_loop:
+    unit=input('请输入单元号：')
+    start_floor = input('请输入起始楼层：')
+    end_floor = input('请输入终止楼层：')
+
+    # 开始输入模板数据
+    input('接下来请输入起始层每个房间的门牌号、南北朝向及面积，按任意键继续')
+
+    start_floor_rooms = {}
+    floor_last_number = []
+    # 收集起始层的房间信息
+
+    # 定义循环控制量
+    room_loop = True
+    while room_loop:
+        last_number = input('请输入起始楼层户室的尾号:（如01，02）')
+        floor_last_number.append(last_number)
+        #将尾号用append()添加列表里，如floor_last_number = ['01','02']
+        room_number = int(start_floor + last_number)
+        #户室号为room_number,由楼层start_floor和尾号last_number组成,如301
+
+        direction = int(input('请输入 %d 的朝向(南北朝向输入1，东西朝向输入2)：' % room_number ))
+        area = int(input('请输入 %d 的面积，单位 ㎡ ：' % room_number))
+        start_floor_rooms[room_number] = [direction,area]
+        # 户室号为键，朝向和面积组成的列表为值，添加到字典里，如start_floor_rooms = {301:[1,70]}
+
+        continued= input('是否需要输入下一个尾号？按 n 停止输入，按其他任意键继续：')
+        #加入打破循环的条件
+        if continued == 'n':
+            room_loop = False
+        else:
+            room_loop = True       
+
+    unit_rooms = {}
+    #新建一个放单元所有户室数据的字典
+    unit_rooms[start_floor] = start_floor_rooms
+    #unit_rooms={3:{301:[1,80],302:[1,80],303:[2,90],304:[2,90]}}
+    for floor in range(int(start_floor) + 1, int(end_floor) + 1):
+    #遍历除初始楼层外的其他楼层
+        floor_rooms = {}
+        #每个楼层都建立一个字典
+        for i in range(len(start_floor_rooms)):
+        #遍历每层有多少个房间，这里是3，即执行for i in range 3 的循环
+            number = str(floor) + floor_last_number[i]
+            info = start_floor_rooms[int(start_floor + floor_last_number[i])]
+            # 依次取出字典start_floor_rooms键对应的值，即面积和朝向组成的列表
+            floor_rooms[int(number)] = info
+            #给字典floor_rooms添加键值对，floor_rooms = {401:[1,80]}
+        unit_rooms[floor] = floor_rooms
+    
+    with open('assets.csv', 'a', newline='')as csvfile:
+    #Mac用户要加多一个参数 encoding = 'GBK'
+        writer = csv.writer(csvfile, dialect='excel')
+        for sub_dict in unit_rooms.values():
+            for room,info in sub_dict.items():
+                dire = ['', '南北', '东西']
+                writer.writerow([title,address,year,block,unit,room,dire[info[0]],info[1]])   
+
+    unit_continue = input('是否需要输入下一个单元？按 n 停止单元输入，按其他任意键继续：')
+    if unit_continue == 'n':
+        unit_loop = False
+    else:
+        unit_loop = True
+
+print('恭喜你，资产录入工作完成！')  

@@ -3,3 +3,6 @@ python<test.py>outputfile.txt
 
 安装numpy库
 pip install numpy
+
+安装selenium库
+pip3 install selenium

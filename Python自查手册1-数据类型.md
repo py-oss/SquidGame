@@ -97,18 +97,6 @@ print(type(students[1]))
 print(type(students[2]))
 ```
 
-##### 切片（查） 将列表的某个片段拿出来处理，切片后的列表也是列表
-```python
-students = ['晓敏',18.8,42]
-print(students[:])
-print(students[0:1])
-print(students[1:])
-print(students[:1])
-print(students[1:2])
-print(students[:0]) # 超出列表范围取出来为空列表
-print(type(students[3:])) # 空列表也是列表
-```
-
 ##### 增
 ```python
 students = ['晓敏',18.8,42]
@@ -130,6 +118,46 @@ del students[0] # del 列表名[元素索引]
 print(students) # del 列表名 可以删除整个列表
 del students['小米'] # del 无法直接删除指定的某元素，必须通过元素的索引才能操作
 print(students) # 报错：类型错误。 只能是整数或者切片，不能使用字符串
+```
+
+##### 查：切片， 将列表的某个片段拿出来处理，切片后的列表也是列表
+```python
+students = ['晓敏',18.8,42]
+print(students[:])
+print(students[0:1])
+print(students[1:])
+print(students[:1])
+print(students[1:2])
+print(students[:0]) # 超出列表范围取出来为空列表
+print(type(students[3:])) # 空列表也是列表
+```
+
+##### 轮流排座问题
+
+###### pop()函数用法
+```python
+print('提取只取不删：')
+list1 = ['0','1','2','3']
+print(list1[3])
+print(list1)
+
+print('\n删除(del)只删不取：' )
+list1 = ['0','1','2','3']
+del list1[3]
+print(list1)
+
+print('\n移除（pop）又取又删：')
+list1 = ['0','1','2','3']
+print(list1.pop())  # 默认删除最后一个元素，并返回该元素的值。
+print(list1)
+print(list1.pop(0))  # 也可指定删除某个元素，并返回该元素的值。
+print(list1)
+
+zuowei = ['小明','小红','小刚']
+for i in range(3): # 循环第一步，永远先确定次数是否明确，决定选择那种循环方法
+    zuowei1 = zuowei.pop(0) # 要传数值0进去，因为逻辑是删除第一个并取值；不加0则是删除最后一个并取值，底下就变成继续追加进末尾，结果自然相同
+    zuowei.append(zuowei1)  # 之后将上面取到的值追加近新列表里面
+    print(zuowei)
 ```
 
 #### 字典

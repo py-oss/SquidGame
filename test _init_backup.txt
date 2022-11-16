@@ -1,8 +1,0 @@
-在CMD终端运行以下代码，可以将Python结果导出为txt
-python<test.py>outputfile.txt
-
-安装numpy库
-pip install numpy
-
-安装selenium库
-pip3 install selenium

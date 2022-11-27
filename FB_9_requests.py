@@ -24,7 +24,7 @@ txt1 = res.text
 with open(r'SquidGame\1.txt','w+',encoding='utf-8') as f:
     f.write(txt1)
 
-# response对象常用属性之四：res.encoding，定义Response对象的编码
+# response对象常用属性之四：res.encoding，强制网页按照某种编码读取解析
 import requests
 res = requests.get('https://localprod.pandateacher.com/python-manuscript/crawler-html/sanguo.md')
 res.encoding='utf-8' # 定义Reponse对象的编码为utf-8，遇上文本的乱码问题，才考虑用res.encoding

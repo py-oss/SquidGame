@@ -30,11 +30,15 @@ for item in items:
 # 练习：抓取书名和评分
 import requests
 from bs4 import BeautifulSoup
-res = requests.get('https://www.huchiu.com/wxapp/')
+res = requests.get('https://www.hunuo.com/xiaochengxu/')
+res.encoding='utf-8'
 html = res.text
 soup = BeautifulSoup(html,'html.parser')
-items = soup.find_all(class_='tabs')
-for item in items:
-    leibie = item.find(class_='item')
-    with open(r'SquidGame\jieguo.txt','w+',encoding='utf-8') as f:
-        f.write(leibie.text)
+items = soup.find_all(class_='item')
+# print(items)
+with open(r'SquidGame\jieguo.txt','w+',encoding='utf-8') as f:
+    for item in items:
+        leibie = item.find('h2')
+        # leibie2 = leibie.text
+        # leibie2 = leibie2.replace('、','\n')
+        f.write(leibie.text + '\n')

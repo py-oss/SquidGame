@@ -28,6 +28,7 @@ with open(r'SquidGame\1.txt','w+',encoding='utf-8') as f:
 import requests
 res = requests.get('https://localprod.pandateacher.com/python-manuscript/crawler-html/sanguo.md')
 res.encoding='utf-8' # 定义Reponse对象的编码为utf-8，遇上文本的乱码问题，才考虑用res.encoding
+# res.encoding = res.apparent_encoding # 强制转码
 novel=res.text # 把Response对象的内容以字符串的形式返回
 print(novel[:800]) # 打印小说的前800个字
 
